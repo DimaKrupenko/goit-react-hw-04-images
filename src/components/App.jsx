@@ -1,5 +1,5 @@
 import styles from './styles.css'
-import React from 'react'
+import { useState } from "react";
 import { Audio } from 'react-loader-spinner'
 import { Searchbar } from './Searchbar/Searchbar'
 import {ImageGallery} from './ImageGallery/ImageGallery'
@@ -9,49 +9,50 @@ import Modal from 'components/Modal/Modal'
 
 
 
-export class App extends React.Component {
-  state = {
-    imagesSearch: [],
-    isLoading: false,
-    showModal: false,
-    searchQuery: '',
-    largeImageUrl: '',
-  }
+
+export const App = () => {
+  // state = {
+  //   imagesSearch: [],
+  //   isLoading: false,
+  //   showModal: false,
+  //   searchQuery: '',
+  //   largeImageUrl: '',
+  // }
+
+  const [imagesSearch, setImagesSearch] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [largeImageUrl, setLargeImageUrl] = useState('')
+
   
    
-  addMaterial = async () => {
+  const addMaterial = async () => {
     try {
-      this.setState({ isLoading: true })
+      setIsLoading(true)
       API.resetPage()
       API.resetQuery()
-      API.setQuery(this.state.searchQuery)
+      API.setQuery(searchQuery)
       const material = await API.addMaterial()
-      this.setState({
-        imagesSearch: material,
-        isLoading: false
-      })
+      setImagesSearch(material)
+      setIsLoading(false)
      
       API.increasePage()
 
-      this.setState({
-    searchQuery: ''
- })}
+      setSearchQuery('')
+    }
     
     catch (error) {
       console.log(error)
     }
   }
 
-  onLoad = async () => {
+  const onLoad = async () => {
     try {
-      this.setState({
-        isLoading: true
-      })
+      setIsLoading(true)
       const material = await API.addMaterial()
-      this.setState({
-        imagesSearch: [...this.state.imagesSearch, ...material],
-         isLoading: false
-      })
+      setImagesSearch(prevState => [...imagesSearch, ...material])
+       setIsLoading(false)
       API.increasePage()
     }
     catch (error) {
@@ -59,42 +60,36 @@ export class App extends React.Component {
     }
   }
 
-  queryHandler =(evt)=> {
-    this.setState({
-      searchQuery: evt.target.value
-    })
+  const queryHandler =(evt)=> {
+   
+    setSearchQuery(evt.target.value)
   }
 
-  modalHandler = (item) => {
-    this.setState({
-      largeImageUrl: item.largeImageURL
-    })
-    this.showModal()
+ const modalHandler = (item) => {
+   
+   setLargeImageUrl(item.largeImageURL)
+    showModalHandler()
   }
   
  
-  closeModal = () => {
-    this.setState({
-       showModal: false
-     })
+  const closeModal = () => {
+    setShowModal(false)
    }
   
-  showModal = () => {
-     this.setState({
-       showModal: true
-     })
+  const showModalHandler = () => {
+     setShowModal(true)
   }
 
-  render() {
+  
     return (
     <div className={styles.App}
     >
       <Searchbar
-          onSubmit={this.addMaterial}
-          value={this.state.searchQuery}
-          onChange={this.queryHandler}
+          onSubmit={addMaterial}
+          value={searchQuery}
+          onChange={queryHandler}
       />
-      {this.state.isLoading && <Audio
+      {isLoading && <Audio
         height="80"
         width="80"
         radius="9"
@@ -105,19 +100,19 @@ export class App extends React.Component {
         
       />}
       <ImageGallery
-          items={this.state.imagesSearch}
-          modalHandler={this.modalHandler}
+          items={imagesSearch}
+          modalHandler={modalHandler}
         />
-        {this.state.imagesSearch.length >= 12 &&
+        {imagesSearch.length >= 12 &&
           <Button
-          onLoad={this.onLoad}
+          onLoad={onLoad}
           />}
-         {this.state.showModal && <Modal
-            onClose={this.closeModal}>
-            <img src={this.state.largeImageUrl} alt='img'/>
+         {showModal && <Modal
+            onClose={closeModal}
+            largeImageUrl={largeImageUrl}>
             </Modal>}
     </div>
   );
-  }
+  
 };
 

@@ -1,47 +1,46 @@
 import styles from './Modal.module.css'
 import React from 'react'
+import { useEffect } from "react";
 
 
 
-class Modal extends React.Component{
+const Modal = ({ largeImageUrl, onClose }) => {
    
-    componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown)
-  }
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+})
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown)
-  }
-
-  handleKeyDown = evt => {
+  const handleKeyDown = evt => {
     if (evt.code === 'Escape') {
       // this.setState(state => ({
       //   showModal: false
       // }))
-     this.props.onClose()
+     onClose()
 
     }
   }
     
-    handleClickBackdrop = evt => {
+    const handleClickBackdrop = evt => {
     if (evt.currentTarget === evt.target) {
       //  this.setState(state => ({
       //   showModal: false
       // }))
-     this.props.onClose()
+     onClose()
     }
-  }
-
-    render() {
-         return <div className={styles.overlay} onClick={this.handleClickBackdrop}>
+    }
+  
+         return <div className={styles.overlay} onClick={handleClickBackdrop}>
         <div className={styles.modal}>
-                {this.props.children}
+                <img src={largeImageUrl} alt='img'/>
     
   </div>
 </div>
     }
    
-}
+
 
 
 export default Modal

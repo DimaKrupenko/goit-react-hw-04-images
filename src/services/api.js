@@ -10,23 +10,23 @@ export const API = {
   query: '',
 
   increasePage() {
-    this.page += 1;
+    API.page += 1;
   },
 
   resetPage() {
-    this.page = 1;
+    API.page = 1;
   },
 
   setQuery(query) {
-    this.query = query;
+    API.query = query;
   },
 
   resetQuery() {
-    this.query = '';
+    API.query = '';
   },
 
   async addMaterial() {
-    const url = `https://pixabay.com/api/?key=${this.API_KEY}&q=${this.query}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=${this.per_page}`;
+    const url = `https://pixabay.com/api/?key=${API.API_KEY}&q=${API.query}&image_type=photo&orientation=horizontal&safesearch=true&page=${API.page}&per_page=${API.per_page}`;
     const response = await axios.get(url);
     return response.data.hits;
   },
